@@ -25,6 +25,8 @@ option(RE2_BUILD_FRAMEWORK "build RE2 as a framework" OFF)
 # so we provide an option similar to BUILD_TESTING, but just for RE2.
 option(RE2_BUILD_TESTING "enable testing for RE2" OFF)
 
+option(RE2_INSTALL "generate and install RE2 target" ON)
+
 # The pkg-config Requires: field.
 set(REQUIRES)
 
@@ -232,32 +234,34 @@ if(RE2_BUILD_TESTING)
   endforeach()
 endif()
 
-install(TARGETS re2
-        EXPORT re2Targets
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        FRAMEWORK DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/re2
-        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(EXPORT re2Targets
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/re2
-        NAMESPACE re2::)
+if(RE2_INSTALL)
+  install(TARGETS re2
+          EXPORT re2Targets
+          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+          FRAMEWORK DESTINATION ${CMAKE_INSTALL_LIBDIR}
+          PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/re2
+          INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(EXPORT re2Targets
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/re2
+          NAMESPACE re2::)
 
-configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/re2Config.cmake.in
-                              ${CMAKE_CURRENT_BINARY_DIR}/re2Config.cmake
-                              INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/re2)
-write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/re2ConfigVersion.cmake
-                                 VERSION ${SONAME}.0.0
-                                 COMPATIBILITY SameMajorVersion)
+  configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/re2Config.cmake.in
+                                ${CMAKE_CURRENT_BINARY_DIR}/re2Config.cmake
+                                INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/re2)
+  write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/re2ConfigVersion.cmake
+                                   VERSION ${SONAME}.0.0
+                                   COMPATIBILITY SameMajorVersion)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/re2Config.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/re2ConfigVersion.cmake
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/re2)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/re2Config.cmake
+                ${CMAKE_CURRENT_BINARY_DIR}/re2ConfigVersion.cmake
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/re2)
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/re2.pc.in
-               ${CMAKE_CURRENT_BINARY_DIR}/re2.pc
-               @ONLY)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/re2.pc.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/re2.pc
+                 @ONLY)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/re2.pc
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/re2.pc
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+endif()
